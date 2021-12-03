@@ -1,0 +1,42 @@
+---
+title: "Bayesian Spatial-temporal Model"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+## Model Assumptions
+
+- Spatial data can be defined as realizations of a stochastic process indexed by
+$Y(s)\equiv\{y(s), s\in D\}$, where D is a fixed subset of $\mathcal{R}^2$.
+- The actual data can be formally represented by a collection of observations
+$y = \{y(s_1),...,y(s_n) \}$, where the set $(s_1,...,s_n)$ represents the spatial units. Here, $y$ represents the number of infected cases observed in each public health unit.
+- $y_{i}\sim\text{Poisson}(\mu_{i})$. Let $\frac{\mu_{i}}{e_i}$ denote the unknown infected risk in zone i (i = 1,2,...,n) and  $e_{i}$ is the population size in zone i.
+- $log(\mu_{i})=log(e_{i})+\theta_{i}$, where $\theta_{i}$ is the log infected risk of COVID-19 in area i.
+
+## Defining Bayesian Spatial-temporal Models
+
+$$
+\begin{align*}
+& y_{it}\sim Poisson(\mu_{it})\\
+& log(\mu_{it})=log(e_{i})+\theta_{it}\\
+& \theta_{it}=\alpha+\beta X+u_{i}+v_{i}+\gamma_{t}+\phi_{t}+\delta_{it}\\
+& (u_{k}|u_{i},k\neq i,\tau_{u}^{2})\sim N\left(\frac{\sum_{i}u_{i}\omega_{ki}}{\sum_{i}\omega_{ki}},\frac{\tau_{u}^{2}}{\sum_{i}\omega_{ki}}\right)\\
+& v_{i}\sim N(0,\tau_{v}^{2})\\
+&\gamma_{t}|\gamma_{t-1},\gamma_{t-2}\sim N(2\gamma_{t-1}+\gamma_{t-2},\sigma_{\gamma}^{2})\\
+& \phi_{t}\sim N(0,\sigma_{\phi}^{2})
+\end{align*}
+$$
+where $y_{i}$ is the age-adjusted number of COVID-19 cases in i=1,...,I areas; $\beta=(\beta_{1},\beta_{2},...,\beta_{p})$ represents the vector of covariate coefficients; $X=(x_{1},x_{2},...,x_{p})$ is the COVID-19 relevant covariate data vector. $u_{i}$ is a spatially structured random effect under GMRF with $k\sim i$ referring to neighbor regions i and j sharing a common boundary line and $v_{i}$ is a spatially unstructured random effect with mean zero and variance $\tau_{v}^{2}$. $\omega_{ki}=1$ if k,i are adjacent, $\omega_{ki}=0$ otherwise. The term $\gamma_{t}$ represents the temporally structured effect, modeled dynamically through a neighboring structure using a second-order random walk $\gamma_{t}|\gamma_{t-1},\gamma_{t-2}\sim N(2\gamma_{t-1}+\gamma_{t-2},\sigma_{\gamma}^{2})$ and $\phi_{t}\sim N(0,\sigma_{\phi}^{2})$.
+
+###   Four Different Interaction Types
+
+|Type of sptaial-temporal interaction|$R_\delta$|
+|------------------------------------|----------|
+|Ⅰ|$I_s \bigotimes I_t$|
+|II|$I_s \bigotimes R_t$|
+|III|$R_s \bigotimes I_t$|
+|IV|$R_s \bigotimes R_t$|
+
+where the identity matrices $I_{s}(I_{t})$ correspond to the unstructured spatial (temporal) effect respectively, whereas $R_{t}(R_{s})$ represent non-identity matrices that correspond to a specific structured temporal (spatial) effect.
